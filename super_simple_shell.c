@@ -3,15 +3,16 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <string.h>
+#define MAX_TOKENS 100
 
 int main (void)
 {
 	char *buffer = 0;
 	size_t buffer_size;
-	char *argv[] = {".", 0};
-	int x;
-	int counter = 0;
-
+	int x, i;
+	/*int counter = 0;*/
+	char *token;
+	char *tokens[MAX_TOKENS];
 
 	while(1)
 	{
@@ -19,14 +20,23 @@ int main (void)
 		{
 			exit(0);
 		}
+		token = strtok(buffer, " \n");
+		i = 0;
+		while (token != NULL)
+		{
+			tokens[i] = token;
+			token = strtok(NULL, " \n");
+			i++;
+		}
+		tokens[i] = NULL;
 		x = fork();
-		while(buffer[counter] != '\n')
+		/*while(buffer[counter] != '\n')
 			counter++;
-		buffer[counter] = '\0';
+		buffer[counter] = '\0';*/
 		if(x != 0)
 			wait(0);
 		else
-			execve(buffer, argv, 0);
+			execve(tokens[0], tokens, 0);
 	}
 	return (0);
 }
