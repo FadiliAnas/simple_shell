@@ -2,36 +2,31 @@
 #include <unistd.h>
 #include <sys/wait.h>
 #include <stdlib.h>
+#include <string.h>
 
 int main (void)
 {
 	char *buffer = 0;
-	size_t buffer_size ;
-	ssize_t return_value;
+	size_t buffer_size;
 	char *argv[] = {".", 0};
-
-    int counter = 0;
-
 	int x;
+	int counter = 0;
+
 
 	while(1)
-	{    
-	buffer = malloc(sizeof(char)*buffer_size);
-	write(1,"$ ", 2);
-       
-	return_value = getline(&buffer, &buffer_size, stdin);
-	write(1,"\n", 1);
-    while (buffer[counter] != '\n')
-        counter++;
-    buffer[counter] = '\0';
-    x = fork();
-
-	if(x != 0)
-		wait(0);
-	else
 	{
-        execve(buffer, argv, 0 );
-	}  
+		if (getline(&buffer, &buffer_size, stdin) == -1)
+		{
+			exit(0);
+		}
+		x = fork();
+		while(buffer[counter] != '\n')
+			counter++;
+		buffer[counter] = '\0';
+		if(x != 0)
+			wait(0);
+		else
+			execve(buffer, argv, 0);
 	}
-    return (0);
+	return (0);
 }
