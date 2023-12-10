@@ -8,10 +8,14 @@
 #include <string.h>
 #define MAX_TOKENS 100
 
-int main(void);
+extern char **environ;
+int status;
+
 char *str_concat(char *s1, char *s2);
 char *path(char *command, char **env);
 int check_fullpath(char *token);
+
+
 
 
 #endif

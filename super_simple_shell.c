@@ -25,7 +25,7 @@ char *path(char *command, char **env)
 			j = 0;
 			while (full_paths[j])
 			{
-				commands_full_path = str_concat(full_paths[j], command);
+				commands_full_path = str_concat(full_paths[j], str_concat("/", command));
 				if (access(commands_full_path, X_OK) == 0)
 					return (commands_full_path);
 				j++;
@@ -52,7 +52,6 @@ int check_fullpath(char *token)
 
 int main(void)
 {
-	extern char **environ;
 	char *buffer = 0;
 	size_t buffer_size;
 	int x, i;
@@ -60,12 +59,13 @@ int main(void)
 	char *tokens[MAX_TOKENS];
 	char *_path;
 
+	status = 0;
 
 	while(1)
 	{
 		if (getline(&buffer, &buffer_size, stdin) == -1)
 		{
-			exit(0);
+			exit(status);
 		}
 		token = strtok(buffer, " \n");
 		i = 0;
@@ -82,10 +82,15 @@ int main(void)
 		{
 			_path = path(tokens[0], environ);
 			if (_path == NULL)
-				perror("not found");
+			{
+				write(2, "./hsh: 1: ", 10);
+				write(2, tokens[0], strlen(tokens[0]));
+				write(2, ": not found\n", 12);
+				exit(127);
+			}
 			x = fork();
 			if (x != 0)
-				wait (0);
+				wait(0);
 			else
 				execve(_path, tokens, environ);
 		}
@@ -93,10 +98,12 @@ int main(void)
 		{
 			x = fork();
 			if(x != 0)
+			{
 				wait(0);
+			}
 			else
 				execve(tokens[0], tokens, environ);
 		}
 	}
-	return (0);
+	return (status);
 }
