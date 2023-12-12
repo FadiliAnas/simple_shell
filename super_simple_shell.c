@@ -1,10 +1,10 @@
 #include "main.h"
 
 
-char paths_to_check(char env)
+char **paths_to_check(char **env)
 {
 	int i, j;
-	char tok,path_token, env_val;
+	char *tok, *path_token, *env_val;
 	char **full_paths = NULL;
 
 	for (i = 0; env[i] != NULL; i++)
