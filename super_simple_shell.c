@@ -7,10 +7,11 @@ char *path(char *command, char **env)
 	char *tok, *path_token, *commands_full_path, *env_val;
 	char *full_paths[1024];
 
-	for (i = 0; env[i] != NULL; i++)
+
+	for (i = 0; env[i] != 0; i++)
 	{
 		tok = strtok(env[i], "=");
-		if (strcmp(tok, "PATH"))
+		if (strcmp(tok, "PATH") == 0)
 		{
 			env_val = strtok(NULL, "\n");
 			path_token = strtok(env_val, ":");
@@ -18,7 +19,7 @@ char *path(char *command, char **env)
 			while (path_token != NULL)
 			{
 				full_paths[j] = path_token;
-				path_token = strtok(NULL, "\n");
+				path_token = strtok(NULL, ":");
 				j++;
 			}
 			full_paths[j] = NULL;
@@ -31,7 +32,6 @@ char *path(char *command, char **env)
 				j++;
 			}
 		}
-		i++;
 	}
 	return (NULL);
 }
@@ -40,7 +40,7 @@ int check_fullpath(char *token)
 {
 	int i;
 
-	for (i = 0; (token + i) != NULL ; i++)
+	for (i = 0; token[i] != '\0' ; i++)
 	{
 		if (token[i] == '/')
 			return (1);
@@ -50,7 +50,7 @@ int check_fullpath(char *token)
 
 
 
-int main(void)
+int main(int argc __attribute__((unused)), char *argv[])
 {
 	char *buffer = 0;
 	size_t buffer_size;
@@ -58,6 +58,7 @@ int main(void)
 	char *token;
 	char *tokens[MAX_TOKENS];
 	char *_path;
+	char *name_of_shell = argv[0];
 
 	status = 0;
 
@@ -68,6 +69,8 @@ int main(void)
 			exit(status);
 		}
 		token = strtok(buffer, " \n");
+		if (token == NULL)
+			continue;
 		i = 0;
 		while (token != NULL)
 		{
@@ -83,26 +86,45 @@ int main(void)
 			_path = path(tokens[0], environ);
 			if (_path == NULL)
 			{
-				write(2, "./hsh: 1: ", 10);
+				write(2, name_of_shell, strlen(name_of_shell));
+				write(2, ": 1: ", 5);
 				write(2, tokens[0], strlen(tokens[0]));
 				write(2, ": not found\n", 12);
-				exit(127);
+				status = 127;
 			}
-			x = fork();
-			if (x != 0)
-				wait(0);
 			else
-				execve(_path, tokens, environ);
+			{
+				x = fork();
+				if (x != 0)
+				{
+					wait(0);
+					status >>= 8;
+				}	
+				else
+					execve(_path, tokens, environ);
+			}
 		}
 		else
 		{
-			x = fork();
-			if(x != 0)
+			if (access(tokens[0], X_OK) == 0)
 			{
-				wait(0);
+				x = fork();
+				if(x != 0)
+				{
+					wait(0);
+					status >>= 8;
+				}
+				else
+					execve(tokens[0], tokens, environ);
 			}
 			else
-				execve(tokens[0], tokens, environ);
+			{
+				write(2, name_of_shell, strlen(name_of_shell));
+				write(2, ": 1: ", 5);
+				write(2, tokens[0], strlen(tokens[0]));
+				write(2, ": not found\n", 12);
+				status = 127;
+			}
 		}
 	}
 	return (status);

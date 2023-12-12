@@ -6,7 +6,7 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <string.h>
-#define MAX_TOKENS 100
+#define MAX_TOKENS 1024
 
 extern char **environ;
 int status;
