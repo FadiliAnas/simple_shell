@@ -3,7 +3,7 @@
 
 char **paths_to_check(char **env)
 {
-	int i, j;
+	int i, j, length_of_full_paths;
 	char *tok, *path_token, *env_val;
 	char **full_paths = NULL;
 
@@ -16,10 +16,21 @@ char **paths_to_check(char **env)
 			path_token = strtok(env_val, ":");
 			j = 0;
 
-			full_paths[j] = malloc(sizeof(char) * strlen(path_token) + 1);
-
 			while (path_token != NULL)
 			{
+				length_of_full_paths += strlen(path_token);
+				path_token = strtok(NULL, ":");
+				j++;
+			}
+			full_paths = malloc((j + 1) * sizeof(char) + length_of_full_paths + 1);
+			if (full_paths == NULL)
+			{
+				exit(status);
+				return (NULL);
+			}
+			while (path_token != NULL)
+			{
+
 				full_paths[j] = path_token;
 				path_token = strtok(NULL, ":");
 				j++;
