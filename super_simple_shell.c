@@ -95,6 +95,7 @@ int main(int argc __attribute__((unused)), char *argv[])
 {
 	char *buffer = 0;
 	size_t buffer_size;
+	ssize_t get_line;
 	int x, i;
 	char *token;
 	char *tokens[MAX_TOKENS];
@@ -104,10 +105,10 @@ int main(int argc __attribute__((unused)), char *argv[])
 
 	while(1)
 	{
-		if (getline(&buffer, &buffer_size, stdin) == -1)
-		{
-			exit(status);
-		}
+		get_line = getline(&buffer, &buffer_size, stdin);
+		if (buffer[0] == '\n' || get_line == '\0' || get_line == EOF ||(strncmp(buffer, "exit", 4) == 0))
+			break;
+
 		token = strtok(buffer, " \n");
 		if (token == NULL)
 			continue;
