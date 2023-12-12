@@ -3,9 +3,9 @@
 
 char **paths_to_check(char **env)
 {
-	int i, j, length_of_full_paths;
+	int i, j;
 	char *tok, *path_token, *env_val;
-	char **full_paths = NULL;
+	char **full_paths;
 
 	for (i = 0; env[i] != NULL; i++)
 	{
@@ -14,23 +14,17 @@ char **paths_to_check(char **env)
 		{
 			env_val = strtok(NULL, "\n");
 			path_token = strtok(env_val, ":");
-			j = 0;
 
-			while (path_token != NULL)
-			{
-				length_of_full_paths += strlen(path_token);
-				path_token = strtok(NULL, ":");
-				j++;
-			}
-			full_paths = malloc((j + 1) * sizeof(char) + length_of_full_paths + 1);
+			full_paths = malloc(5000);
 			if (full_paths == NULL)
 			{
-				exit(status);
+				exit(0);
 				return (NULL);
 			}
+
+			j = 0;
 			while (path_token != NULL)
 			{
-
 				full_paths[j] = path_token;
 				path_token = strtok(NULL, ":");
 				j++;
@@ -69,6 +63,7 @@ int path(char *command, char **env, char **tokens, char *name_of_shell)
 		}
 		j++;
 	}
+
 	write(2, name_of_shell, strlen(name_of_shell));
 	write(2, ": 1: ", 5);
 	write(2, tokens[0], strlen(tokens[0]));
@@ -103,10 +98,12 @@ int main(int argc __attribute__((unused)), char *argv[])
 
 	status = 0;
 
-	while(1)
+	while (1)
 	{
 		get_line = getline(&buffer, &buffer_size, stdin);
-		if (buffer[0] == '\n' || get_line == '\0' || get_line == EOF ||(strncmp(buffer, "exit", 4) == 0))
+		if (buffer[0] == '\n' || (strncmp(buffer, "exit", 4) == 0))
+			break;
+		if (get_line == '\0' || get_line == EOF)
 			break;
 
 		token = strtok(buffer, " \n");
@@ -131,7 +128,7 @@ int main(int argc __attribute__((unused)), char *argv[])
 			if (access(tokens[0], X_OK) == 0)
 			{
 				x = fork();
-				if(x != 0)
+				if (x != 0)
 				{
 					wait(&status);
 					status >>= 8;
