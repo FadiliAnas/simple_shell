@@ -12,9 +12,9 @@ extern char **environ;
 int status;
 
 char *str_concat(char *s1, char *s2);
-char *path(char *command, char **env);
+int path(char *command, char **env, char **tokens, char *name_of_shell);
 int check_fullpath(char *token);
-
+char **paths_to_check(char **env);
 
 
 

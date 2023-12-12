@@ -1,14 +1,13 @@
 #include "main.h"
 
 
-char *path(char *command, char **env)
+char paths_to_check(char env)
 {
 	int i, j;
-	char *tok, *path_token, *commands_full_path, *env_val;
-	char *full_paths[1024];
+	char tok,path_token, env_val;
+	char **full_paths = NULL;
 
-
-	for (i = 0; env[i] != 0; i++)
+	for (i = 0; env[i] != NULL; i++)
 	{
 		tok = strtok(env[i], "=");
 		if (strcmp(tok, "PATH") == 0)
@@ -16,6 +15,9 @@ char *path(char *command, char **env)
 			env_val = strtok(NULL, "\n");
 			path_token = strtok(env_val, ":");
 			j = 0;
+
+			full_paths[j] = malloc(sizeof(char) * strlen(path_token) + 1);
+
 			while (path_token != NULL)
 			{
 				full_paths[j] = path_token;
@@ -23,19 +25,47 @@ char *path(char *command, char **env)
 				j++;
 			}
 			full_paths[j] = NULL;
-			j = 0;
-			while (full_paths[j])
-			{
-				commands_full_path = str_concat(full_paths[j], str_concat("/", command));
-				if (access(commands_full_path, X_OK) == 0)
-					return (commands_full_path);
-				j++;
-			}
 		}
 	}
-	return (NULL);
+	return (full_paths);
 }
 
+
+int path(char *command, char **env, char **tokens, char *name_of_shell)
+{
+	int x, j;
+	char *commands_full_path;
+	char **full_paths = NULL;
+
+
+	full_paths = paths_to_check(env);
+
+	j = 0;
+	while (full_paths[j])
+	{
+		commands_full_path = str_concat(full_paths[j], str_concat("/", command));
+		if (access(commands_full_path, X_OK) == 0)
+		{
+			x = fork();
+			if (x != 0)
+			{
+				wait(&status);
+				status >>= 8;
+				return (0);
+			}
+			else
+				execve(commands_full_path, tokens, NULL);
+		}
+		j++;
+	}
+	write(2, name_of_shell, strlen(name_of_shell));
+	write(2, ": 1: ", 5);
+	write(2, tokens[0], strlen(tokens[0]));
+	write(2, ": not found\n", 12);
+	status = 127;
+
+	return (1);
+}
 int check_fullpath(char *token)
 {
 	int i;
@@ -57,7 +87,6 @@ int main(int argc __attribute__((unused)), char *argv[])
 	int x, i;
 	char *token;
 	char *tokens[MAX_TOKENS];
-	char *_path;
 	char *name_of_shell = argv[0];
 
 	status = 0;
@@ -80,29 +109,10 @@ int main(int argc __attribute__((unused)), char *argv[])
 		}
 		tokens[i] = NULL;
 
-
 		if (!check_fullpath(tokens[0]))
 		{
-			_path = path(tokens[0], environ);
-			if (_path == NULL)
-			{
-				write(2, name_of_shell, strlen(name_of_shell));
-				write(2, ": 1: ", 5);
-				write(2, tokens[0], strlen(tokens[0]));
-				write(2, ": not found\n", 12);
-				status = 127;
-			}
-			else
-			{
-				x = fork();
-				if (x != 0)
-				{
-					wait(0);
-					status >>= 8;
-				}	
-				else
-					execve(_path, tokens, environ);
-			}
+			if (path(tokens[0], environ, tokens, name_of_shell) == 0)
+				continue;
 		}
 		else
 		{
@@ -111,7 +121,7 @@ int main(int argc __attribute__((unused)), char *argv[])
 				x = fork();
 				if(x != 0)
 				{
-					wait(0);
+					wait(&status);
 					status >>= 8;
 				}
 				else
