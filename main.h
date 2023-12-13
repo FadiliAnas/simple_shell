@@ -11,6 +11,8 @@
 extern char **environ;
 int status;
 
+char *_strdup(char *str);
+int _strcmp(char *s1, char *s2);
 char *str_concat(char *s1, char *s2);
 int path(char *command, char **env, char **tokens, char *name_of_shell);
 int check_fullpath(char *token);

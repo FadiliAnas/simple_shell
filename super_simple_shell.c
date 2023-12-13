@@ -2,89 +2,46 @@
 
 char **paths_to_check(char **env)
 {
-    int i, j;
-    char *tok, *path_token, *env_val;
-    char **full_paths;
-
-    for (i = 0; env[i] != NULL; i++)
-    {
-        tok = strtok(strdup(env[i]), "=");
-        if (strcmp(tok, "PATH") == 0)
-        {
-            env_val = strtok(NULL, "\n");
-            path_token = strtok(strdup(env_val), ":");
-
-            full_paths = malloc(5000 * sizeof(char *));
-            if (full_paths == NULL)
-            {
-                exit(0);
-                return NULL;
-            }
-
-            j = 0;
-            while (path_token != NULL)
-            {
-                full_paths[j] = strdup(path_token);
-                path_token = strtok(NULL, ":");
-                j++;
-            }
-            full_paths[j] = NULL;
-
-           
-          
-
-            return full_paths;
-        }
-    }
-
-    return NULL;
-}
-
-/*
-char **paths_to_check(char **env)
-{
 	int i, j;
 	char *tok, *path_token, *env_val;
 	char **full_paths;
 
 	for (i = 0; env[i] != NULL; i++)
 	{
-	
-		tok = strtok(env[i], "=:");
-		if (strcmp(tok, "PATH") == 0)
+		tok = strtok(_strdup(env[i]), "=");
+		if (_strcmp(tok, "PATH") == 0)
 		{
 			env_val = strtok(NULL, "\n");
-			path_token = strtok(env_val, "=:");
+			path_token = strtok(_strdup(env_val), ":");
 
-			full_paths = malloc(5000);
+			full_paths = malloc(5000 * sizeof(char *));
 			if (full_paths == NULL)
 			{
 				exit(0);
-				return (NULL);
+				return NULL;
 			}
 
 			j = 0;
 			while (path_token != NULL)
 			{
-				full_paths[j] = path_token;
+				full_paths[j] = _strdup(path_token);
 				path_token = strtok(NULL, ":");
 				j++;
 			}
 			full_paths[j] = NULL;
-			return(full_paths);
+			return full_paths;
 		}
-
 	}
-	return (NULL);
+
+	return NULL;
 }
-*/
+
 
 int path(char *command, char **env, char **tokens, char *name_of_shell)
 {
 	int x, j;
 	char *commands_full_path;
 	char **full_paths = NULL;
-
 
 	full_paths = paths_to_check(env);
 	if (full_paths == NULL)
@@ -95,7 +52,6 @@ int path(char *command, char **env, char **tokens, char *name_of_shell)
 		write(2, ": not found\n", 12);
 		exit(127);
 	}
-
 	j = 0;
 	while (full_paths[j])
 	{
@@ -114,13 +70,11 @@ int path(char *command, char **env, char **tokens, char *name_of_shell)
 		}
 		j++;
 	}
-
 	write(2, name_of_shell, strlen(name_of_shell));
 	write(2, ": 1: ", 5);
 	write(2, tokens[0], strlen(tokens[0]));
 	write(2, ": not found\n", 12);
 	status = 127;
-
 	return (1);
 }
 int check_fullpath(char *token)
