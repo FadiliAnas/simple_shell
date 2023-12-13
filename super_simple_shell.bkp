@@ -1,60 +1,20 @@
 #include "main.h"
 
-char **paths_to_check(char **env)
-{
-    int i, j;
-    char *tok, *path_token, *env_val;
-    char **full_paths;
 
-    for (i = 0; env[i] != NULL; i++)
-    {
-        tok = strtok(strdup(env[i]), "=");
-        if (strcmp(tok, "PATH") == 0)
-        {
-            env_val = strtok(NULL, "\n");
-            path_token = strtok(strdup(env_val), ":");
-
-            full_paths = malloc(5000 * sizeof(char *));
-            if (full_paths == NULL)
-            {
-                exit(0);
-                return NULL;
-            }
-
-            j = 0;
-            while (path_token != NULL)
-            {
-                full_paths[j] = strdup(path_token);
-                path_token = strtok(NULL, ":");
-                j++;
-            }
-            full_paths[j] = NULL;
-
-           
-          
-
-            return full_paths;
-        }
-    }
-
-    return NULL;
-}
-
-/*
 char **paths_to_check(char **env)
 {
 	int i, j;
 	char *tok, *path_token, *env_val;
 	char **full_paths;
+	(void) env_val;
 
 	for (i = 0; env[i] != NULL; i++)
 	{
-	
-		tok = strtok(env[i], "=:");
+		tok = strtok(env[i], '=');
 		if (strcmp(tok, "PATH") == 0)
 		{
 			env_val = strtok(NULL, "\n");
-			path_token = strtok(env_val, "=:");
+			path_token = strtok(NULL, ":");
 
 			full_paths = malloc(5000);
 			if (full_paths == NULL)
@@ -71,13 +31,13 @@ char **paths_to_check(char **env)
 				j++;
 			}
 			full_paths[j] = NULL;
-			return(full_paths);
+			return (full_paths);
 		}
 
 	}
 	return (NULL);
 }
-*/
+
 
 int path(char *command, char **env, char **tokens, char *name_of_shell)
 {
