@@ -30,9 +30,11 @@ char **paths_to_check(char **env)
 				j++;
 			}
 			full_paths[j] = NULL;
+			return (full_paths);
 		}
+
 	}
-	return (full_paths);
+	return (NULL);
 }
 
 
@@ -44,6 +46,14 @@ int path(char *command, char **env, char **tokens, char *name_of_shell)
 
 
 	full_paths = paths_to_check(env);
+	if (full_paths == NULL)
+	{
+		write(2, name_of_shell, strlen(name_of_shell));
+		write(2, ": 1: ", 5);
+		write(2, tokens[0], strlen(tokens[0]));
+		write(2, ": not found\n", 12);
+		exit(127);
+	}
 
 	j = 0;
 	while (full_paths[j])
