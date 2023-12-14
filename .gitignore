@@ -1,3 +1,5 @@
 TEST_SUITES
 allowed_functions
 runchecker.bash
+hsh
+SIMPLE_SHELL_TEST_SUITE
