@@ -36,7 +36,10 @@ int main(__attribute__((unused)) int argumentCount, __attribute__((unused)) char
 		while (tok[counter] != NULL && counter < MAX_TOKENS - 1) 
 		{
 			if (tok[counter][0] == '#')
+			{
+				tok[counter] = NULL;
 				break;
+			}
 			counter++;
 			tok[counter] = strtok(NULL, " \n");
 		}
