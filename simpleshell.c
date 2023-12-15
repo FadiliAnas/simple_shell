@@ -8,7 +8,7 @@
  * Return: Returns 0 on successful execution.
  */
 
-int main(__attribute__((unused)) int argumentCount, __attribute__((unused)) char **argumentVector, char **environment) 
+int main(__attribute__((unused)) int argumentCount, __attribute__((unused)) char **argumentVector, char **environment)
 {
 	size_t counter = 0;
 	char *tok[MAX_TOKENS];
@@ -33,7 +33,7 @@ int main(__attribute__((unused)) int argumentCount, __attribute__((unused)) char
 
 		tok[counter] = strtok(inputBuffer, " \n");
 
-		while (tok[counter] != NULL && counter < MAX_TOKENS - 1) 
+		while (tok[counter] != NULL && counter < MAX_TOKENS - 1)
 		{
 			if (tok[counter][0] == '#')
 			{
@@ -43,25 +43,28 @@ int main(__attribute__((unused)) int argumentCount, __attribute__((unused)) char
 			counter++;
 			tok[counter] = strtok(NULL, " \n");
 		}
-		if (_strcmp(inputBuffer, "exit") == 0) 
+		if (_strcmp(inputBuffer, "exit") == 0)
 		{
 			free(inputBuffer);
 			exitOut();
 		}
-		else if (_strcmp(inputBuffer, "env") == 0) 
+		else if (_strcmp(inputBuffer, "env") == 0)
 		{
 			_printenviron();
 			continue;
 		}
-		if (tok[0] == NULL) 
+		if (tok[0] == NULL)
 			continue;
 		cmd_exe(tok, environment);
 	}
 	free(inputBuffer);
 	return (0);
 }
+/**
+ * _printenviron - prints environmnet var
+ **/
 
-void _printenviron()
+void _printenviron(void)
 {
 	int i;
 	char *newline = "\n";

@@ -1,5 +1,5 @@
 #ifndef MAIN_H
-#define MAIN_H 
+#define MAIN_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +22,6 @@ char *_strcpy(char *dest, char *src);
 char *_strchr(char *s, char c);
 char *_getenviron(char *name);
 void _printenviron(void);
-void exitOut();
+void exitOut(void);
 
 #endif

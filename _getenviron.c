@@ -3,7 +3,7 @@
 extern char **environ;
 
 /**
- * _getenv - Get the value of an environment variable.
+ * _getenviron - Get the value of an environment variable.
  * @name: Name of the environment variable.
  * Return: The value of the environment variable or NULL if not found.
  */

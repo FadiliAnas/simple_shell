@@ -2,10 +2,9 @@
 
 /**
  * exitOut - Exits the program with the specified status.
- * @status: The exit status code.
  */
 
-void exitOut()
+void exitOut(void)
 {
-    exit(status);
+	exit(status);
 }
