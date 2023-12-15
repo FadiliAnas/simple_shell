@@ -48,10 +48,27 @@ int main(__attribute__((unused)) int argumentCount, __attribute__((unused)) char
 			free(inputBuffer);
 			exitOut();
 		}
+		else if (_strcmp(inputBuffer, "env") == 0) 
+		{
+			_printenviron();
+			continue;
+		}
 		if (tok[0] == NULL) 
 			continue;
 		cmd_exe(tok, environment);
 	}
 	free(inputBuffer);
 	return (0);
+}
+
+void _printenviron()
+{
+	int i;
+	char *newline = "\n";
+
+	for (i = 0; environ[i] != NULL; i++)
+	{
+		write(1, environ[i], _strlen(environ[i]));
+		write(1, newline, 1);
+	}
 }

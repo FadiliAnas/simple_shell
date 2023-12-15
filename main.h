@@ -21,6 +21,7 @@ int _strlen(char *s);
 char *_strcpy(char *dest, char *src);
 char *_strchr(char *s, char c);
 char *_getenviron(char *name);
+void _printenviron(void);
 void exitOut();
 
 #endif
